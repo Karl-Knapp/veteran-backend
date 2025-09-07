@@ -8,7 +8,9 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "https://bthfitness.org", 
+    "https://bthfitness.org",
+    "https://www.bthfitness.org",
+    "https://api.bthfitness.org", 
 ],
     allow_credentials=True,
     allow_methods=["*"],

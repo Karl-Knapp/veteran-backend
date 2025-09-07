@@ -25,7 +25,8 @@ app = FastAPI(
 # CORS configuration
 origins = [
     "https://bthfitness.org",
-    "https://api.bthfitness.org"  
+    "https://www.bthfitness.org",
+    "https://api.bthfitness.org",
 ]
 
 app.add_middleware(
