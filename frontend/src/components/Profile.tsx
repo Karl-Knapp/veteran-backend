@@ -238,9 +238,9 @@ const Profile: React.FC = () => {
                 </Heading>
                 <Text color={subTextColor} fontSize="md" mb={2}>{`@${userData.username}`}</Text>
                 <Text color={subTextColor} fontSize="sm" mb={1}>{userData.email}</Text>
-                <Text color={subTextColor} fontSize="sm" mb={4}>
+                {/* <Text color={subTextColor} fontSize="sm" mb={4}>
                   {userData.phoneNumber || 'No phone number provided'}
-                </Text>
+                </Text> */}
                 
                 <HStack mb={3} spacing={2}>
                   <Badge colorScheme="gray" px={3} py={1} borderRadius="full">
@@ -345,11 +345,11 @@ const Profile: React.FC = () => {
               <Divider borderColor={dividerColor} />
               
               {/* Only show properties that have values */}
-              {userData.email && (
+              {/* {userData.email && (
                 <Text color={textColor} fontSize="md">
                   <strong>Email:</strong> {userData.email}
                 </Text>
-              )}
+              )} */}
               
               <Text color={textColor} fontSize="md">
                 <strong>Phone:</strong> {userData.phoneNumber || 'Not provided'}

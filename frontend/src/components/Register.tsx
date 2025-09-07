@@ -472,7 +472,7 @@ const Register: React.FC = () => {
                       </FormControl>
 
                       <FormControl id="weight" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>Weight (kg)</FormLabel>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>Weight (lbs)</FormLabel>
                         <Input
                           type="number"
                           placeholder="Weight"
@@ -489,7 +489,7 @@ const Register: React.FC = () => {
                       </FormControl>
 
                       <FormControl id="height" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>Height (cm)</FormLabel>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>Height (feet)</FormLabel>
                         <Input
                           type="number"
                           placeholder="Height"
