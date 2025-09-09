@@ -1,44 +1,83 @@
-# Healthy, balanced fitness and nutrition tasks for veterans
 DEFAULT_TASKS = [
-    # Fitness tasks - moderate, achievable goals
-    {
-        "description": "Take a 20-minute walk today",
-        "category": "fitness"
-    },
-    {
-        "description": "Do 10 push-ups (modify as needed)",
-        "category": "fitness"
-    },
-    {
-        "description": "Stretch for 10 minutes",
-        "category": "fitness"
-    },
-    {
-        "description": "Drink 8 glasses of water today",
-        "category": "wellness"
-    },
-    
-    # Nutrition tasks - focused on healthy habits, not restriction
-    {
-        "description": "Eat a serving of vegetables with lunch",
-        "category": "nutrition"
-    },
-    {
-        "description": "Have a healthy breakfast",
-        "category": "nutrition"
-    },
-    {
-        "description": "Limit processed snacks today",
-        "category": "nutrition"
-    },
-    
-    # Mental wellness for veterans
-    {
-        "description": "Take 5 minutes for deep breathing",
-        "category": "wellness"
-    },
-    {
-        "description": "Connect with a friend or family member",
-        "category": "wellness"
-    }
+    # Fitness tasks - general program
+    {"description": "Day 1 - Warm-up - 5-10 minutes of light cardio (brisk walking, cycling).", "category": "fitness"},
+    {"description": "Day 1 - Warm-up - Dynamic stretches (arm circles, leg swings).", "category": "fitness"},
+    {"description": "Day 1 - Strength - Bodyweight squats - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Push-ups (modified if needed) - 3 sets of 10 reps.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Dumbbell or resistance band rows - 3 sets of 12 reps per arm.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Plank - 3 sets of 30 seconds.", "category": "fitness"},
+    {"description": "Day 1 - Cardio Finisher - Stationary bike or brisk walk - 10-15 minutes.", "category": "fitness"},
+    {"description": "Day 2 - Cardio - Interval jogging or brisk walking - 20 minutes.", "category": "fitness"},
+    {"description": "Day 2 - Cardio - Jumping jacks - 3 sets of 1 minute.", "category": "fitness"},
+    {"description": "Day 2 - Flexibility - Static stretching for all major muscle groups - 15 minutes.", "category": "fitness"},
+    {"description": "Day 3 - Active Recovery - Light walking, swimming, or yoga - optional.", "category": "fitness"},
+    {"description": "Day 4 - Warm-up - 5-10 minutes of light cardio.", "category": "fitness"},
+    {"description": "Day 4 - Warm-up - Arm circles, shoulder rolls, neck stretches.", "category": "fitness"},
+    {"description": "Day 4 - Strength - Bench press or push-ups - 3 sets of 10-12 reps.", "category": "fitness"},
+    {"description": "Day 4 - Strength - Dumbbell bicep curls - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 4 - Strength - Tricep dips - 3 sets of 10 reps.", "category": "fitness"},
+    {"description": "Day 4 - Strength - Lat pulldowns or assisted pull-ups - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 4 - Cardio Finisher - Rowing machine or swimming - 10-15 minutes.", "category": "fitness"},
+    {"description": "Day 5 - Warm-up - Light cardio and dynamic stretches.", "category": "fitness"},
+    {"description": "Day 5 - Core - Plank variations - 3 sets of 30 seconds each.", "category": "fitness"},
+    {"description": "Day 5 - Core - Russian twists - 3 sets of 15 reps.", "category": "fitness"},
+    {"description": "Day 5 - Core - Leg raises - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 5 - Flexibility - Yoga or Pilates - 20 minutes.", "category": "fitness"},
+    {"description": "Day 6 - Outdoor Activity - Hiking, biking, or activity of choice - 60 minutes.", "category": "fitness"},
+    {"description": "Day 7 - Rest - Full recovery, no structured exercise.", "category": "fitness"},
+
+    # Adaptive fitness tasks
+    {"description": "Day 1 - Warm-up - Seated leg lifts - 2 sets of 10 reps.", "category": "fitness"},
+    {"description": "Day 1 - Warm-up - Arm circles - 2 sets of 10 reps in each direction.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Seated chest press with resistance bands - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Seated rows with resistance bands - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Seated leg press with resistance bands - 3 sets of 10 reps.", "category": "fitness"},
+    {"description": "Day 1 - Strength - Seated shoulder press with light dumbbells - 3 sets of 10 reps.", "category": "fitness"},
+    {"description": "Day 1 - Cardio Finisher - Arm ergometer (upper body cycling) - 10-15 minutes.", "category": "fitness"},
+    {"description": "Day 2 - Yoga - Gentle seated yoga poses for flexibility and relaxation - 20 minutes.", "category": "fitness"},
+    {"description": "Day 2 - Flexibility - Seated stretches for major muscle groups - 15 minutes.", "category": "fitness"},
+    {"description": "Day 3 - Active Recovery - Light seated stretching, breathing exercises, or relaxation techniques - optional.", "category": "fitness"},
+    {"description": "Day 4 - Cardio - Seated marching or leg cycling - 20 minutes.", "category": "fitness"},
+    {"description": "Day 4 - Cardio - Seated jumping jacks - 3 sets of 1 minute.", "category": "fitness"},
+    {"description": "Day 4 - Core - Seated torso twists - 3 sets of 15 reps.", "category": "fitness"},
+    {"description": "Day 4 - Core - Seated leg raises - 3 sets of 12 reps.", "category": "fitness"},
+    {"description": "Day 4 - Core - Seated side bends - 3 sets of 12 reps per side.", "category": "fitness"},
+    {"description": "Day 5 - Flexibility - Seated or supported standing stretches - 20 minutes.", "category": "fitness"},
+    {"description": "Day 5 - Balance - Seated or supported standing balance exercises - 15 minutes.", "category": "fitness"},
+    {"description": "Day 6 - Outdoor Activity - Accessible outdoor activity (nature walk, adapted biking) - 60 minutes.", "category": "fitness"},
+    {"description": "Day 7 - Rest - Full recovery, no structured exercise.", "category": "fitness"},
+
+    # Nutrition tasks
+    {"description": "Breakfast - Scrambled eggs (2) with spinach and diced tomatoes.", "category": "nutrition"},
+    {"description": "Breakfast - Whole grain toast.", "category": "nutrition"},
+    {"description": "Breakfast - Greek yogurt with berries.", "category": "nutrition"},
+    {"description": "Morning Snack - A small handful of mixed nuts (almonds, walnuts, etc.).", "category": "nutrition"},
+    {"description": "Morning Snack - One apple or banana.", "category": "nutrition"},
+    {"description": "Lunch - Grilled chicken breast (4-6 oz) with side salad (lettuce, cucumber, bell peppers) and light vinaigrette.", "category": "nutrition"},
+    {"description": "Lunch - Quinoa or brown rice (½ cup).", "category": "nutrition"},
+    {"description": "Afternoon Snack - Baby carrots or celery sticks with hummus.", "category": "nutrition"},
+    {"description": "Dinner - Baked salmon (4-6 oz) with steamed broccoli.", "category": "nutrition"},
+    {"description": "Dinner - Roasted sweet potatoes.", "category": "nutrition"},
+    {"description": "Dinner - Side salad with mixed greens and vegetables of choice.", "category": "nutrition"},
+    {"description": "Evening Snack - Low-fat cottage cheese or a low-sugar protein shake.", "category": "nutrition"},
+    {"description": "Hydration - Drink plenty of water throughout the day.", "category": "nutrition"},
+    {"description": "Hydration - Herbal teas or infused water for variety.", "category": "nutrition"},
+
+    # Wellness tasks
+    {"description": "Connect with peers - Connect with fellow veterans to build camaraderie.", "category": "wellness"},
+    {"description": "Connect with peers - Share experiences to gain understanding and emotional support.", "category": "wellness"},
+    {"description": "Mindfulness and meditation - Practice mindfulness or meditation to help manage stress.", "category": "wellness"},
+    {"description": "Mindfulness and meditation - Use techniques such as deep breathing or guided meditation to promote relaxation.", "category": "wellness"},
+    {"description": "Physical exercise - Engage in regular physical activity such as walking, jogging, or adaptive fitness.", "category": "wellness"},
+    {"description": "Physical exercise - Use exercise as a natural mood booster and support for mental health.", "category": "wellness"},
+    {"description": "Hobbies and leisure activities - Pursue hobbies like art, music, or sports that bring joy.", "category": "wellness"},
+    {"description": "Hobbies and leisure activities - Use leisure activities as a positive outlet for stress.", "category": "wellness"},
+    {"description": "Establish routine - Create a daily routine with structure and consistency.", "category": "wellness"},
+    {"description": "Establish routine - Use your schedule to provide stability and a sense of control.", "category": "wellness"},
+    {"description": "Seek professional support - Reach out to mental health professionals when needed.", "category": "wellness"},
+    {"description": "Seek professional support - Explore individual counseling or group therapy for coping tools.", "category": "wellness"},
+    {"description": "Mind-body practices - Try practices such as yoga or tai chi for balance and mindfulness.", "category": "wellness"},
+    {"description": "Mind-body practices - Combine physical movement with mindfulness to improve well-being.", "category": "wellness"},
+    {"description": "Self-compassion - Be kind and patient with yourself during challenges.", "category": "wellness"},
+    {"description": "Self-compassion - Remember it’s okay to seek help and prioritize mental well-being.", "category": "wellness"}
 ]
