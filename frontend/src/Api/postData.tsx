@@ -85,7 +85,12 @@ export const postUser = async ({
 
 		const response = await api.post(
 			`${API_URL}/users/register`,
-			payload
+			payload,
+			{
+				headers: {
+				'Content-Type': 'application/json'
+				}
+			}
 		);
 
 		// Show success toast based on response data
@@ -336,7 +341,7 @@ export const postGroupData = async (
 			formData,
 			{
 				headers: {
-					"Content-Type": "multipart/form-data", // This is important for file uploads
+					"Content-Type": "multipart/form-data",
 				},
 			}
 		);
@@ -423,6 +428,10 @@ export const postChatCreateRoomData = async (
 		await api.post(`${API_URL}/chat/create`, {
 			room_id: roomId,
 			user: user,
+		}, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 	} catch (error) {
 		console.error("Failed to create post:", error);

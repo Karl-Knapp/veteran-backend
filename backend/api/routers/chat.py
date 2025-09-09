@@ -25,13 +25,30 @@ class ConnectionManager:
         self.active_connections[room_id].append(websocket)
 
     def disconnect(self, websocket: WebSocket, room_id: str):
-        self.active_connections[room_id].remove(websocket)
+        if websocket in self.active_connections[room_id]:
+            self.active_connections[room_id].remove(websocket)
         if not self.active_connections[room_id]:
             del self.active_connections[room_id]
 
     async def broadcast(self, message: str, room_id: str):
-        for connection in self.active_connections[room_id]:
-            await connection.send_text(message)
+        if room_id not in self.active_connections:
+            return
+            
+        # Create a copy of the connections list to avoid modification during iteration
+        connections = self.active_connections[room_id].copy()
+        disconnected = []
+        
+        for connection in connections:
+            try:
+                await connection.send_text(message)
+            except Exception as e:
+                # Connection is closed, mark for removal
+                disconnected.append(connection)
+        
+        # Remove disconnected connections
+        for connection in disconnected:
+            if connection in self.active_connections[room_id]:
+                self.active_connections[room_id].remove(connection)
 
 manager = ConnectionManager()
 

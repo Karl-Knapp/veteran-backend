@@ -271,7 +271,12 @@ export const getSearchGroupsData = async (
 export const getChatRoomsData = async (user: string | null) => {
 	try {
 		const response = await api.get(
-			`${API_URL}/chat?user=${user}`
+			`${API_URL}/chat?user=${user}`,
+			{
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
 		);
 		return response.data;
 	} catch (error) {
@@ -291,6 +296,9 @@ export const getChatMessagesData = async (roomId: string) => {
 	try {
 		const response = await api.get(`${API_URL}/chat/messages`, {
 			params: { room_id: roomId },
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 		const newMessages = response.data.map((msg: MessageProp) => {
 			const { room_id, ...otherFields } = msg;
@@ -308,6 +316,9 @@ export const getChatRoomMembersData = async (roomId: string) => {
 	try {
 		const response = await api.get(`${API_URL}/chat/users`, {
 			params: { room_id: roomId },
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 		return response.data;
 	} catch (error) {
