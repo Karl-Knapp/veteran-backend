@@ -196,77 +196,77 @@ export interface PostPostParams {
 	images: File[];
 }
 
-// export const postPostData = async (newPost: PostPostParams) => {
-// 	try {
-// 		const formData = new FormData();
-// 		if (newPost.author) {
-// 			formData.append("author", newPost.author);
-// 		}
-// 		formData.append("content", newPost.content);
-// 		newPost.topics.forEach((topic) => {
-// 			formData.append("topics", topic);
-// 		});
-
-// 		// Append images to FormData
-// 		newPost.images.forEach((image) => {
-// 			formData.append("images", image);
-// 		});
-// 		await api.post(`${API_URL}/posts/`, formData);
-// 		return { success: true };
-// 	} catch (error) {
-// 		console.error("Failed to create post:", error);
-// 		return { success: false, error };
-// 	}
-// };
-
 export const postPostData = async (newPost: PostPostParams) => {
 	try {
 		const formData = new FormData();
-		
-		// Add author
 		if (newPost.author) {
 			formData.append("author", newPost.author);
 		}
-		
-		// Add content
 		formData.append("content", newPost.content);
-		
-		// Handle topics - send as comma-separated string for easier parsing
-		if (newPost.topics && newPost.topics.length > 0) {
-			formData.append("topics", newPost.topics.join(","));
-		} else {
-			// Send default topic if none provided
-			formData.append("topics", "general");
-		}
-
-		// Append images to FormData
-		if (newPost.images && newPost.images.length > 0) {
-			newPost.images.forEach((image) => {
-				formData.append("images", image);
-			});
-		}
-
-		console.log("Sending FormData:", {
-			author: newPost.author,
-			content: newPost.content,
-			topics: newPost.topics,
-			imageCount: newPost.images?.length || 0
+		newPost.topics.forEach((topic) => {
+			formData.append("topics", topic);
 		});
 
-		const response = await api.post(`${API_URL}/posts/`, formData);
-		return { success: true, data: response.data };
-	} catch (error: any) {
+		// Append images to FormData
+		newPost.images.forEach((image) => {
+			formData.append("images", image);
+		});
+		await api.post(`${API_URL}/posts/`, formData);
+		return { success: true };
+	} catch (error) {
 		console.error("Failed to create post:", error);
-		
-		// Log more details about the error
-		if (error.response) {
-			console.error("Error response:", error.response.data);
-			console.error("Error status:", error.response.status);
-		}
-		
 		return { success: false, error };
 	}
 };
+
+// export const postPostData = async (newPost: PostPostParams) => {
+// 	try {
+// 		const formData = new FormData();
+		
+// 		// Add author
+// 		if (newPost.author) {
+// 			formData.append("author", newPost.author);
+// 		}
+		
+// 		// Add content
+// 		formData.append("content", newPost.content);
+		
+// 		// Handle topics - send as comma-separated string for easier parsing
+// 		if (newPost.topics && newPost.topics.length > 0) {
+// 			formData.append("topics", newPost.topics.join(","));
+// 		} else {
+// 			// Send default topic if none provided
+// 			formData.append("topics", "general");
+// 		}
+
+// 		// Append images to FormData
+// 		if (newPost.images && newPost.images.length > 0) {
+// 			newPost.images.forEach((image) => {
+// 				formData.append("images", image);
+// 			});
+// 		}
+
+// 		console.log("Sending FormData:", {
+// 			author: newPost.author,
+// 			content: newPost.content,
+// 			topics: newPost.topics,
+// 			imageCount: newPost.images?.length || 0
+// 		});
+
+// 		const response = await api.post(`${API_URL}/posts/`, formData);
+// 		return { success: true, data: response.data };
+// 	} catch (error: any) {
+// 		console.error("Failed to create post:", error);
+		
+// 		// Log more details about the error
+// 		if (error.response) {
+// 			console.error("Error response:", error.response.data);
+// 			console.error("Error status:", error.response.status);
+// 		}
+		
+// 		return { success: false, error };
+// 	}
+// };
 
 export const postCommentData = async (
 	postId: string,

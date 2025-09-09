@@ -26,20 +26,10 @@ logger = logging.getLogger(__name__)
 async def create_post(
     author: str = Form(..., description="Username of the post's author"),
     content: str = Form(..., description="Content of the post"),
-    topics: str = Form(default="general", description="Comma-separated topics associated with the post"),
+    topics: Set[str] = Form(default={"general"}, description="Set of topics associated with the post"),
     images: List[UploadFile] = File(default=[], description="List of images")
 ):
     try:
-        # Parse topics from comma-separated string to set
-        if topics:
-            topics_set = {topic.strip() for topic in topics.split(",") if topic.strip()}
-        else:
-            topics_set = {"general"}
-        
-        # Ensure we have at least one topic
-        if not topics_set:
-            topics_set = {"general"}
-        
         # Upload images to S3
         image_urls = []
 
@@ -52,7 +42,7 @@ async def create_post(
         post = Post(
             author=author,
             content=content,
-            topics=topics_set,  # Now using the parsed set
+            topics=topics,
             images=set(image_urls) if image_urls else {"none"},
         )
         post_dict = post.dict()
