@@ -4,7 +4,7 @@ import {
   Flex, Spacer, Button, Input, Avatar, Center, useToast,
   Heading, Badge, Container, useColorModeValue
 } from '@chakra-ui/react';
-import { Edit, MapPin, Briefcase, Heart, Activity } from 'react-feather';
+import { Edit, Briefcase, Heart, Activity } from 'react-feather'; //Add MapPin later if we add back MapPin functionality.
 import { useAuth } from '../Auth/Auth';
 import { getUserData } from '../Api/getData';
 import { putUserData } from '../Api/putData';
