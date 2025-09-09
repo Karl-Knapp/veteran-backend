@@ -18,6 +18,7 @@ import {
   Grid,
   useToast,
   useColorModeValue,
+  Select,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { postUser } from '../Api/postData';
@@ -36,6 +37,7 @@ interface FormData {
   interests: string[];
   employmentStatus: string;
   workLocation: string;
+  liveState: string;
   liveLocation: string;
   isVeteran: boolean;
   weight: number;
@@ -59,6 +61,7 @@ const Register: React.FC = () => {
     interests: [],
     employmentStatus: '',
     workLocation: '',
+    liveState: '',
     liveLocation: '',
     isVeteran: false,
     weight: 0,
@@ -152,12 +155,16 @@ const Register: React.FC = () => {
   const handleBack = () => setStep(step - 1);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    
+    // Type guard to check if it's an input element with checkbox
+    const isCheckbox = type === 'checkbox' && 'checked' in e.target;
+    
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -223,6 +230,22 @@ const Register: React.FC = () => {
       }
     });
   };
+
+  const stateOptions = [
+    // US States
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
+    'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 
+    'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
+    'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 
+    'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 
+    'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 
+    'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 
+    'Wisconsin', 'Wyoming',
+    // US Territories
+    'American Samoa', 'Guam', 'Northern Mariana Islands', 'Puerto Rico', 'US Virgin Islands',
+    // Special option
+    'US Veteran Living Outside US'
+  ];
 
   return (
     <Center minH="100vh" bg={useColorModeValue("gray.50", "gray.900")}>
@@ -439,11 +462,31 @@ const Register: React.FC = () => {
                         </Stack>
                       </FormControl>
 
+                      <FormControl id="liveState" isRequired>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>State/Territory</FormLabel>
+                        <Select
+                          placeholder="Select your state or territory"
+                          name="liveState"
+                          value={formData.liveState}
+                          onChange={handleInputChange}
+                          size="lg"
+                          bg={inputBgColor}
+                          color={textColor}
+                          borderColor={borderColor}
+                        >
+                          {stateOptions.map((state) => (
+                            <option key={state} value={state} style={{ backgroundColor: inputBgColor }}>
+                              {state}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+
                       <FormControl id="liveLocation" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>Where do you live?</FormLabel>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>City</FormLabel>
                         <Input
                           type="text"
-                          placeholder="Living Location"
+                          placeholder="Enter your city"
                           name="liveLocation"
                           value={formData.liveLocation}
                           onChange={handleInputChange}
@@ -489,7 +532,7 @@ const Register: React.FC = () => {
                       </FormControl>
 
                       <FormControl id="height" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>Height (feet)</FormLabel>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>Height (inches)</FormLabel>
                         <Input
                           type="number"
                           placeholder="Height"

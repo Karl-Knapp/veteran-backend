@@ -14,6 +14,7 @@ class UserCreate(BaseModel):
     interests: Optional[List[str]] = None
     employmentStatus: Optional[str] = None
     workLocation: Optional[str] = None
+    liveState: Optional[str] = None
     liveLocation: Optional[str] = None
     isVeteran: bool
     weight: Optional[Decimal] = None 
@@ -41,6 +42,7 @@ class UserResponse(BaseModel):
     isVeteran: Optional[bool]
     employmentStatus: Optional[str]
     workLocation: Optional[str]
+    workState: Optional[str]
     liveLocation: Optional[str]
     height: Optional[int]  # Height in inches
     weight: Optional[int]
@@ -70,6 +72,7 @@ class UserUpdateRequest(BaseModel):
     interests: Optional[List[str]] = None
     employmentStatus: Optional[str] = None
     workLocation: Optional[str] = None
+    liveState: Optional[str] = None
     liveLocation: Optional[str] = None
     isVeteran: Optional[bool] = None
     weight: Optional[Decimal] = None
@@ -77,7 +80,7 @@ class UserUpdateRequest(BaseModel):
     profilePic: Optional[UploadFile] = None
     agreedToDisclosures: Optional[bool] = None
 
-    @validator('employmentStatus', 'workLocation', 'liveLocation', 'weight', 'height', always=True)
+    @validator('employmentStatus', 'workLocation', 'liveState', 'liveLocation', 'weight', 'height', always=True)
     def validate_veteran_fields(cls, v, values, field):
         if values.get('isVeteran'):
             if v is None:

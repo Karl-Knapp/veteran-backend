@@ -21,8 +21,6 @@ router = APIRouter(
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 stripe.webhook_secret = os.getenv("VITE_STRIPE_WEBHOOK_SECRET")
-print(f"Stripe secret key: {stripe.api_key}")
-print(f"Stripe webhook secret: {stripe.webhook_secret}")
 
 # Configure DynamoDB
 dynamodb = boto3.resource(

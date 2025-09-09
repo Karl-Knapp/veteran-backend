@@ -115,7 +115,7 @@ export const postUser = async ({
 			setAuth.setIsAdmin(loginResponse.role === "admin");
 			setAuth.setAuth(true);
 
-			console.log("Auto-login successful with role:", loginResponse.role);
+			// console.log("Auto-login successful with role:", loginResponse.role);
 
 			// Navigate to user's feed page after successful login
 			navigate(`/${formData.username}/feed`);

@@ -130,10 +130,10 @@ const OtherProfile: React.FC<OtherProfileProps> = ({ otherUsername }) => {
             </Badge>
           )}
           <Text fontSize="xl" color={subTextColor}>{`@${userData.username}`}</Text>
-          <Text fontSize="md" color={subTextColor}>{userData.email}</Text>
-          {userData.phoneNumber && (
+          {/* <Text fontSize="md" color={subTextColor}>{userData.email}</Text> */}
+          {/* {userData.phoneNumber && (
             <Text fontSize="md" color={subTextColor}>{userData.phoneNumber}</Text>
-          )}
+          )} */}
 
           {isAdmin && (
             <Button

@@ -101,6 +101,7 @@ async def register_user(user: UserCreate):
     if user.isVeteran:
         user_item['employmentStatus'] = user.employmentStatus
         user_item['workLocation'] = user.workLocation
+        user_item['liveState'] = user.liveState
         user_item['liveLocation'] = user.liveLocation
         user_item['height'] = Decimal(user.height) if user.height is not None else None  # Height in inches
         user_item['weight'] = Decimal(user.weight) if user.weight is not None else None  # Weight in pounds
@@ -314,6 +315,7 @@ async def get_all_users(user: dict = Depends(login_manager)):
                     "profilePic": user_data.get("profilePic"),
                     "employmentStatus": user_data.get("employmentStatus"),
                     "workLocation": user_data.get("workLocation"),
+                    "liveState": user_data.get("liveState"),
                     "liveLocation": user_data.get("liveLocation"),
                     "height": user_data.get("height"),
                     "weight": user_data.get("weight")
@@ -338,6 +340,7 @@ async def admin_update_user(
     interests: Optional[List[str]] = Form(None),
     employmentStatus: Optional[str] = Form(None),
     workLocation: Optional[str] = Form(None),
+    liveState: Optional[str] = Form(None),
     liveLocation: Optional[str] = Form(None),
     isVeteran: Optional[bool] = Form(None),
     height: Optional[int] = Form(None),
@@ -373,6 +376,7 @@ async def admin_update_user(
             "interests": interests,
             "employmentStatus": employmentStatus,
             "workLocation": workLocation,
+            "liveState": liveState,
             "liveLocation": liveLocation,
             "isVeteran": isVeteran,
             "height": height,
@@ -414,6 +418,7 @@ async def admin_update_user(
             isVeteran=updated_user.get("isVeteran"),
             employmentStatus=updated_user.get("employmentStatus"),
             workLocation=updated_user.get("workLocation"),
+            liveState=updated_user.get("liveState"),
             liveLocation=updated_user.get("liveLocation"),
             height=updated_user.get("height"),
             weight=updated_user.get("weight"),
@@ -507,6 +512,7 @@ async def get_other_user(username: str, user: dict = Depends(login_manager)):
         "phoneNumber": user_data.get("phoneNumber"),
         "employmentStatus": None,  # Hide employment details
         "workLocation": None,
+        "liveState": None,
         "liveLocation": None,
         "height": None,  # Hide personal details
         "weight": None,
@@ -572,6 +578,7 @@ def search_users(logged_in_user: str, query: str = None):
                     user_info.update({
                         "employmentStatus": user.get("employmentStatus"),
                         "workLocation": user.get("workLocation"),
+                        "liveState": user.get("liveState"),
                         "liveLocation": user.get("liveLocation"),
                     })
                 response_data.append(user_info)
@@ -623,6 +630,7 @@ async def update_user(
     interests: Optional[List[str]] = Form(None),
     employmentStatus: Optional[str] = Form(None),
     workLocation: Optional[str] = Form(None),
+    liveState: Optional[str] = Form(None),
     liveLocation: Optional[str] = Form(None),
     isVeteran: Optional[bool] = Form(None),
     height: Optional[int] = Form(None),
@@ -651,6 +659,7 @@ async def update_user(
             "interests": interests,
             "employmentStatus": employmentStatus,
             "workLocation": workLocation,
+            "liveState": liveState,
             "liveLocation": liveLocation,
             "isVeteran": isVeteran,
             "height": height,
@@ -689,6 +698,7 @@ async def update_user(
             isVeteran=updated_user.get("isVeteran"),
             employmentStatus=updated_user.get("employmentStatus"),
             workLocation=updated_user.get("workLocation"),
+            liveState=updated_user.get("liveState"),
             liveLocation=updated_user.get("liveLocation"),
             height=updated_user.get("height"),
             weight=updated_user.get("weight"),

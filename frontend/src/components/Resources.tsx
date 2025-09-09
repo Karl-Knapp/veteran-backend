@@ -65,7 +65,7 @@ const Resources: React.FC = () => {
       }
       
       if (hasUpdates) {
-        console.log('Updating Resources state with new values');
+        // console.log('Updating Resources state with new values');
         // Create a deep copy of resourcesRef.current
         const newResources = resourcesRef.current.map(r => ({...r}));
         setResources(newResources);
@@ -96,8 +96,8 @@ const Resources: React.FC = () => {
   useEffect(() => {
     // Get user's location when component mounts
     if ("geolocation" in navigator) {
-      console.log("PING")
-      console.log(navigator.geolocation)
+      // console.log("PING")
+      // console.log(navigator.geolocation)
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const location = {
@@ -105,7 +105,7 @@ const Resources: React.FC = () => {
             lon: position.coords.longitude,
           };
           setUserLocation(location);
-          console.log(location);
+          // console.log(location);
 
           try {
             const veteranResources = await getVeteranResources(

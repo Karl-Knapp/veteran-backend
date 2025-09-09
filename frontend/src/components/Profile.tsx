@@ -274,8 +274,8 @@ const Profile: React.FC = () => {
                     {renderField("weight", "Weight (kg)", userData.weight, <Activity size={20} />)}
                   </Box>
                 </HStack>
-                {renderField("liveLocation", "Live Location", userData.liveLocation, <MapPin size={20} />)}
-                {renderField("workLocation", "Work Location", userData.workLocation, <MapPin size={20} />)}
+                {/* {renderField("liveLocation", "Live Location", userData.liveLocation, <MapPin size={20} />)}
+                {renderField("workLocation", "Work Location", userData.workLocation, <MapPin size={20} />)} */}
                 {renderField("interests", "Interests", userData.interests, <Heart size={20} />)}
               </VStack>
             </Box>
@@ -360,11 +360,11 @@ const Profile: React.FC = () => {
               )}
               
               {/* Only show these fields if they have values */}
-              {userData.employmentStatus && (
+              {/* {userData.employmentStatus && (
                 <Text color={textColor} fontSize="md">
                   <strong>Employment:</strong> {userData.employmentStatus}
                 </Text>
-              )}
+              )} */}
               
               {userData.liveLocation && (
                 <Text color={textColor} fontSize="md">
