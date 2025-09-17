@@ -63,7 +63,7 @@ function App() {
                   <Route path="/donation-success" element={<DonationSuccess />} />
                   <Route path="/verify-email" element={<EmailVerification />} />
                   <Route path="/resend-verification" element={<ResendVerification />} />
-                  <Route element={<ProtectedRoute allowedRoles={["veteran", "admin"]} />}>
+                  <Route element={<ProtectedRoute allowedRoles={["veteran", "admin"]} requireEmailVerification={true} />}>
                     <Route path="/:username/feed" element={<Feed />} />
                     <Route path="/:username/chat" element={<Chat />} />
                     <Route path="/:username/groups" element={<Groups />} />
@@ -74,7 +74,7 @@ function App() {
                     <Route path="/:username/forms" element={<Forms />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route element={<ProtectedRoute allowedRoles={["admin"]} requireEmailVerification={true} />}>
                     <Route path="/:username/fitness/admin_view" element={<AdminFitness />} />
                     <Route path="/:username/users/admin_view" element={<Profile />} />
                     <Route path="/:username/visit/:otherUsername" element={<OtherProfile />} />

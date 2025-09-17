@@ -8,6 +8,7 @@ from typing import List, Set
 import logging
 from api.nlp.trends import get_trending_keywords, get_trending_topics
 from api.aws_wrappers.images import upload_image, delete_image
+from api.auth_utils import require_email_verification, get_user_from_token
 
 router = APIRouter(
     prefix="/posts",
@@ -22,14 +23,82 @@ comments_table = dynamodb.Table('comments')
 logger = logging.getLogger(__name__)
 
 # CREATE: Add a new post
+# @router.post("/", response_model=Post)
+# async def create_post(
+#     author: str = Form(..., description="Username of the post's author"),
+#     content: str = Form(..., description="Content of the post"),
+#     topics: Set[str] = Form(default={"general"}, description="Set of topics associated with the post"),
+#     images: List[UploadFile] = File(default=[], description="List of images"),
+#     user: dict = Depends(login_manager)
+# ):
+#     try:
+#         await require_email_verification(author)
+#         # Upload images to S3
+#         image_urls = []
+
+#         if images:
+#             for image in images:
+#                 url = await upload_image("post-pictures", image)
+#                 image_urls.append(url)
+
+#         # Construct the post
+#         post = Post(
+#             author=author,
+#             content=content,
+#             topics=topics,
+#             images=set(image_urls) if image_urls else {"none"},
+#         )
+#         post_dict = post.dict()
+
+
+
+#         # Initialize empty likedBy array if not provided
+#         if 'likedBy' not in post_dict:
+#             post_dict['likedBy'] = []
+            
+#         # Handle empty sets for DynamoDB
+#         if not post_dict.get('topics'):
+#             post_dict['topics'] = {"general"}
+#         if not post_dict.get('images'):
+#             post_dict['images'] = {"none"}
+        
+#         # Save post to DynamoDB
+#         posts_table.put_item(Item=post.dict())
+#         logger.info(f"Post created successfully: {post.postId}")
+#         return post
+#     except ClientError as e:
+#         # Add more detailed error logging
+#         logger.error(f"Failed to save post to DynamoDB: {str(e)}")
+#         logger.error(f"Error code: {e.response['Error']['Code']}")
+#         logger.error(f"Error message: {e.response['Error']['Message']}")
+#         raise HTTPException(
+#             status_code=500, 
+#             detail=f"Failed to create post: {str(e)}"
+#         )
+#     except Exception as e:
+#         # Catch any other exceptions
+#         logger.error(f"Unexpected error creating post: {str(e)}")
+#         raise HTTPException(
+#             status_code=500, 
+#             detail=f"Unexpected error: {str(e)}"
+#         )
+
 @router.post("/", response_model=Post)
 async def create_post(
-    author: str = Form(..., description="Username of the post's author"),
     content: str = Form(..., description="Content of the post"),
     topics: Set[str] = Form(default={"general"}, description="Set of topics associated with the post"),
-    images: List[UploadFile] = File(default=[], description="List of images")
+    images: List[UploadFile] = File(default=[], description="List of images"),
+    user: dict = Depends(login_manager)  # Add authentication dependency
 ):
     try:
+        # Get username from authenticated user
+        author = user.get('username')
+        if not author:
+            raise HTTPException(status_code=401, detail="Invalid authentication")
+        
+        # Check email verification before allowing post creation
+        await require_email_verification(author)
+        
         # Upload images to S3
         image_urls = []
 

@@ -54,6 +54,7 @@ export const getUserData = async ({
 			height: userData.height || 0,
 			profilePic: userData.profilePic || "",
 			isAdmin: checkAdmin ? userData.isAdmin || false : false,
+			email_verified: userData.email_verified || false,
 		};
 
 		setUserData(processedData);
