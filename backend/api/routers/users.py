@@ -120,10 +120,10 @@ async def register_user(user: UserCreate):
         users_table.put_item(Item=user_item)
 
         if user.email:
-            # email_sent = await send_verification_email(user.email, verification_token, user.username)
-            # if not email_sent:
-            #     logger.warning(f"Failed to send verification email to {user.email}")
-            pass #disabled for now
+            email_sent = await send_verification_email(user.email, verification_token, user.username)
+            if not email_sent:
+                logger.warning(f"Failed to send verification email to {user.email}")
+            # pass #disabled for now
 
         await create_default_tasks_for_user(normalized_username)
 
