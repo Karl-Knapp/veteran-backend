@@ -49,6 +49,7 @@ class UserResponse(BaseModel):
     weight: Optional[int]
     profilePic: Optional[str]
     agreedToDisclosures: Optional[bool]
+    email_verified: Optional[bool] = False
 
     @validator('height', 'weight', pre=True, always=True)
     def convert_decimal_to_int(cls, v):
