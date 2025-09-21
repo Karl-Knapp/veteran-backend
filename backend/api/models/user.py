@@ -21,6 +21,7 @@ class UserCreate(BaseModel):
     height: Optional[Decimal] = None
     profilePic: Optional[str] = None
     agreedToDisclosures: Optional[bool]
+    email_verified: Optional[bool] = False
 
     @validator('employmentStatus', 'workLocation', 'liveLocation', 'weight', 'height', always=True)
     def validate_veteran_fields(cls, v, values, field):
