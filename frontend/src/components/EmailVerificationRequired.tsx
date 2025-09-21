@@ -88,8 +88,8 @@ const EmailVerificationRequired: React.FC = () => {
                     </Heading>
                     
                     <Text color={textColor}>
-                        Welcome to BTH Fitness! To ensure the security of our veterans community, 
-                        please verify your email address before accessing the platform.
+                        Welcome to BTH Fitness! To access all features of our veterans community, 
+                        please verify your email address by clicking the button below.
                     </Text>
 
                     {emailSent && (
@@ -111,7 +111,7 @@ const EmailVerificationRequired: React.FC = () => {
                             isLoading={isLoading}
                             loadingText="Sending..."
                         >
-                            {emailSent ? 'Resend Verification Email' : 'Send Verification Email'}
+                            Send Verification Email
                         </Button>
                         
                         <Text fontSize="sm" color={mutedTextColor}>

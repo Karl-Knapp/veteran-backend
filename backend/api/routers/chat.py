@@ -7,6 +7,8 @@ from typing import List, Dict
 from datetime import datetime
 from collections import defaultdict
 
+DEFAULT_ROOMS = ["Hangouts", "Veteran", "Community Events", "Fitness"]
+
 router = APIRouter(
     prefix="/chat",
     tags=["chat"]
@@ -52,20 +54,62 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# @router.websocket("/ws")
+# async def chat_endpoint(websocket: WebSocket, room_id: str, author: str):
+#     await manager.connect(websocket, room_id)
+
+#     # Check if room exists in the database
+#     try:
+#         response = chatrooms_table.get_item(Key={'room_id': room_id})
+#     except ClientError:
+#         await websocket.close()
+#         raise HTTPException(status_code=500, detail="Internal server error.")
+#     else:
+#         if 'Item' not in response:
+#             await websocket.close()
+#             raise HTTPException(status_code=404, detail="Chatroom not found.")
+
+#     try:
+#         while True:
+#             data = await websocket.receive_text()
+
+#             # Generate the timestamp
+#             timestamp = int(datetime.now().timestamp())
+
+#             # Store the message in DynamoDB
+#             message_item = {
+#                 'room_id': room_id,
+#                 'timestamp': timestamp,
+#                 'message': data,
+#                 'author': author
+#             }
+
+#             try:
+#                 messages_table.put_item(Item=message_item)
+#             except ClientError:
+#                 raise HTTPException(status_code=500, detail="Failed to store message.")
+
+#             await manager.broadcast(f"{author} ({datetime.fromtimestamp(timestamp)}): {data}", room_id)
+#     except WebSocketDisconnect:
+#         manager.disconnect(websocket, room_id)
+#         await manager.broadcast(f"{author} has left the room.", room_id)
+
 @router.websocket("/ws")
 async def chat_endpoint(websocket: WebSocket, room_id: str, author: str):
     await manager.connect(websocket, room_id)
 
-    # Check if room exists in the database
-    try:
-        response = chatrooms_table.get_item(Key={'room_id': room_id})
-    except ClientError:
-        await websocket.close()
-        raise HTTPException(status_code=500, detail="Internal server error.")
-    else:
-        if 'Item' not in response:
+    # For default rooms, skip the database check since everyone has access
+    if room_id not in DEFAULT_ROOMS:
+        # Check if room exists in the database for non-default rooms
+        try:
+            response = chatrooms_table.get_item(Key={'room_id': room_id})
+        except ClientError:
             await websocket.close()
-            raise HTTPException(status_code=404, detail="Chatroom not found.")
+            raise HTTPException(status_code=500, detail="Internal server error.")
+        else:
+            if 'Item' not in response:
+                await websocket.close()
+                raise HTTPException(status_code=404, detail="Chatroom not found.")
 
     try:
         while True:
@@ -95,13 +139,18 @@ async def chat_endpoint(websocket: WebSocket, room_id: str, author: str):
 @router.get("/")
 async def get_all_chat_rooms(user: str):
     try:
+        # Get user's joined rooms
         response = chatrooms_table.scan(
             FilterExpression="contains(#users, :user)",
             ExpressionAttributeNames={"#users": "users"},
             ExpressionAttributeValues={":user": user}
         )
-        room_ids = [item['room_id'] for item in response['Items']]
-        return room_ids
+        user_rooms = [item['room_id'] for item in response['Items']]
+        
+        # Combine with default rooms (always available)
+        all_rooms = DEFAULT_ROOMS + user_rooms
+        
+        return list(set(all_rooms))  # Remove duplicates
     except ClientError:
         raise HTTPException(status_code=500, detail="Internal server error.")
     

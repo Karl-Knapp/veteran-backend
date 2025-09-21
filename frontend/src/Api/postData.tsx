@@ -96,8 +96,7 @@ export const postUser = async ({
 		// Show success toast based on response data
 		toast({
 			title: response.data.title || "Registration Successful",
-			description:
-				response.data.message || "Your account has been created successfully.",
+			description: "Your account has been created successfully. Please verify your email to access all features.",
 			status: "success",
 			duration: 5000,
 			isClosable: true,
