@@ -50,9 +50,14 @@ const ProtectedRoute = ({
                 await getUserData({
                     username,
                     setUserData: (userData) => {
+                        console.log('ProtectedRoute - Full user data:', userData);
+
                         const hasEmail = userData.email && userData.email.trim() !== '';
                         const isVerified = userData.email_verified || false;
                         
+                        console.log('ProtectedRoute - hasEmail:', hasEmail); // Add this
+                        console.log('ProtectedRoute - isVerified:', isVerified);
+
                         setUserHasEmail(hasEmail);
                         setIsEmailVerified(isVerified);
                     },
