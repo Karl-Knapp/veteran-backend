@@ -243,7 +243,9 @@ async def login_user(request: Request, login_data: LoginRequest):
     if not verify_password(password, stored_password):
         logger.warning(f"Invalid password for user: {username}")
         raise HTTPException(status_code=400, detail="Invalid password.")
-
+    
+    email_verified = user_data.get('email_verified', False)
+    
     # Generate a token for the user
     token = login_manager.create_access_token(
         data={"sub": username},
@@ -258,7 +260,7 @@ async def login_user(request: Request, login_data: LoginRequest):
         logger.error(f"This is not an admin")
 
     # Return the token as JSON instead of RedirectResponse
-    return {"access_token": token, "token_type": "bearer", "role": role}
+    return {"access_token": token, "token_type": "bearer", "role": role, "email_verified": email_verified, "username": username}
 
 @router.get("/logout")
 def logout(user: dict = Depends(login_manager)):
