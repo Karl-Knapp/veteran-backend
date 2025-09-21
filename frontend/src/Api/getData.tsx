@@ -58,6 +58,10 @@ export const getUserData = async ({
 		};
 
 		setUserData(processedData);
+
+		console.log('Raw API response:', response.data);
+		console.log('email_verified in response:', response.data.email_verified);
+		console.log('Type of email_verified:', typeof response.data.email_verified);
 	} catch (error: unknown) {
 		const message =
 			axios.isAxiosError(error) && error.response?.data?.detail
