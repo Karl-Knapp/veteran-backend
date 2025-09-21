@@ -500,6 +500,9 @@ async def get_other_user(username: str, user: dict = Depends(login_manager)):
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
 
+    logger.info(f"Raw DynamoDB data for {username}: {user_data}")
+    logger.info(f"email_verified field: {user_data.get('email_verified')}")
+
     # If the logged-in user is requesting their own data, return full details
     if user["username"] == username:
         return user_data
