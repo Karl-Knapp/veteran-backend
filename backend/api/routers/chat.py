@@ -7,7 +7,7 @@ from typing import List, Dict
 from datetime import datetime
 from collections import defaultdict
 
-DEFAULT_ROOMS = ["Hangouts", "Veteran", "Community Events", "Fitness"]
+DEFAULT_ROOMS = ["Hangouts", "Community Events", "Fitness"]
 
 router = APIRouter(
     prefix="/chat",
