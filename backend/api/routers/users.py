@@ -619,6 +619,10 @@ async def get_user(username: str, user: dict = Depends(login_manager)):
     table_result = users_table.get_item(Key={"username": username})
     user_data = table_result.get("Item")
 
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+
     if user["username"] == username:
         response = user_data
     else:
