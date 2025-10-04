@@ -10,7 +10,6 @@ from passlib.context import CryptContext
 from boto3.dynamodb.conditions import Attr
 from boto3.dynamodb.conditions import Key
 from fastapi.concurrency import run_in_threadpool
-from datetime import timedelta
 from botocore.exceptions import ClientError
 import logging
 from decimal import Decimal
@@ -19,6 +18,7 @@ import secrets
 from datetime import datetime, timedelta
 from api.services.email_service import send_verification_email
 from boto3.dynamodb.conditions import Attr
+import time
 
 router = APIRouter(
     prefix="/users",
@@ -31,6 +31,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Reference to the users table
 users_table = dynamodb.Table('users')
 admins_table = dynamodb.Table('admins')
+
+_user_count_cache = {
+    'count': 0,
+    'last_updated': 0
+}
+CACHE_TTL = 3600 # 1 hour in seconds
 
 # Used for logging
 logger = logging.getLogger(__name__)
@@ -741,3 +747,25 @@ async def delete_user(username: str, user: dict = Depends(login_manager)):
         raise HTTPException(status_code=500, detail="Failed to delete user.")
 
 
+@router.get("/count")
+async def get_user_count():
+    current_time = time.time()
+    
+    # Return cached value if still valid
+    if current_time - _user_count_cache['last_updated'] < CACHE_TTL:
+        return {"count": _user_count_cache['count'], "cached": True}
+    
+    # Cache expired, fetch new count
+    try:
+        response = users_table.scan(Select='COUNT')
+        count = response.get('Count', 0)
+        
+        # Update cache
+        _user_count_cache['count'] = count
+        _user_count_cache['last_updated'] = current_time
+        
+        return {"count": count, "cached": False}
+    except Exception as e:
+        logger.error(f"Failed to get user count: {e}")
+        # Return stale cache if fetch fails
+        return {"count": _user_count_cache['count'], "cached": True}

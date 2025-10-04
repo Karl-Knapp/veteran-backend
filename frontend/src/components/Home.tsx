@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box, Heading, Text, Button, VStack, HStack, Image, Flex, useColorModeValue
+  Box, Heading, Text, Button, VStack, HStack, Image, Flex, useColorModeValue, Container
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Auth/Auth';
+import api from '../Api/api';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface FeatureProps {
   title: string;
@@ -14,14 +17,28 @@ interface FeatureProps {
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { username } = useAuth();
-  
+  const [userCount, setUserCount] = useState<number>(0);
+
   // Add color mode values
   const bgColor = useColorModeValue('white', 'gray.800');
   const headingColor = useColorModeValue('gray.700', 'white');
   const buttonBgColor = useColorModeValue('gray.500', 'gray.500');
   const buttonHoverBg = useColorModeValue('gray.600', 'gray.700');
   const footerBgColor = useColorModeValue('gray.500', 'gray.700');
+  const ctaBgColor = useColorModeValue('gray.600', 'gray.700');
   
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const response = await api.get(`${API_URL}/users/count`);
+        setUserCount(response.data.count);
+      } catch (error) {
+        console.error("Failed to fetch user count:", error);
+      }
+    };
+    fetchUserCount();
+  }, []);
+
   return (
     <Box className="flex flex-col items-center justify-center">
       <Box as="section" position="relative" height="100vh" width="100%" overflow="hidden">
@@ -54,6 +71,36 @@ const Home: React.FC = () => {
           <Feature title="Job Opportunities" description="Discover job opportunities and career support specifically for veterans." imageSrc="careers.jpg" />
         </HStack>
       </VStack>
+
+      <Container maxW="container.lg" py={12} mb={8}>
+        <Box 
+          bg={ctaBgColor} 
+          color="white" 
+          borderRadius="xl" 
+          p={10} 
+          textAlign="center"
+          shadow="lg"
+        >
+          <Heading size="xl" mb={4}>
+            Join {userCount > 0 ? `${userCount.toLocaleString()}` : 'Our Community of'} Veterans
+          </Heading>
+          <Text fontSize="lg" mb={6}>
+            Be part of a growing community dedicated to supporting fellow veterans.
+          </Text>
+          {!username && (
+            <Button 
+              bgColor="white" 
+              color={ctaBgColor}
+              size="lg" 
+              onClick={() => navigate('/register')}
+              _hover={{ transform: 'translateY(-2px)', shadow: 'xl' }}
+              transition="all 0.2s"
+            >
+              Get Started Today
+            </Button>
+          )}
+        </Box>
+      </Container>
 
       <Flex align="center" justify="center" p={4} bg={footerBgColor} color="white" textAlign="center" w="100%">
         <Text>© 2025 BTH Fitness. All rights reserved.</Text>
