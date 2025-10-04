@@ -602,6 +602,29 @@ def search_users(logged_in_user: str, query: str = None):
         logger.error(f"Failed to search users in DynamoDB: {e}")
         raise HTTPException(status_code=500, detail="Failed to search users.")
 
+@router.get("/count")
+async def get_user_count():
+    current_time = time.time()
+    
+    # Return cached value if still valid
+    if current_time - _user_count_cache['last_updated'] < CACHE_TTL:
+        return {"count": _user_count_cache['count'], "cached": True}
+    
+    # Cache expired, fetch new count
+    try:
+        response = users_table.scan(Select='COUNT')
+        count = response.get('Count', 0)
+        
+        # Update cache
+        _user_count_cache['count'] = count
+        _user_count_cache['last_updated'] = current_time
+        
+        return {"count": count, "cached": False}
+    except Exception as e:
+        logger.error(f"Failed to get user count: {e}")
+        # Return stale cache if fetch fails
+        return {"count": _user_count_cache['count'], "cached": True}
+
 @router.get("/{logged_in_user}/{username}")
 def search_users_by_username(username: str, logged_in_user:str):
     # Scan the DynamoDB table to find users with partial match
@@ -751,25 +774,3 @@ async def delete_user(username: str, user: dict = Depends(login_manager)):
         raise HTTPException(status_code=500, detail="Failed to delete user.")
 
 
-@router.get("/count")
-async def get_user_count():
-    current_time = time.time()
-    
-    # Return cached value if still valid
-    if current_time - _user_count_cache['last_updated'] < CACHE_TTL:
-        return {"count": _user_count_cache['count'], "cached": True}
-    
-    # Cache expired, fetch new count
-    try:
-        response = users_table.scan(Select='COUNT')
-        count = response.get('Count', 0)
-        
-        # Update cache
-        _user_count_cache['count'] = count
-        _user_count_cache['last_updated'] = current_time
-        
-        return {"count": count, "cached": False}
-    except Exception as e:
-        logger.error(f"Failed to get user count: {e}")
-        # Return stale cache if fetch fails
-        return {"count": _user_count_cache['count'], "cached": True}
