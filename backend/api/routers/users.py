@@ -80,7 +80,7 @@ async def register_user(user: UserCreate):
         raise HTTPException(status_code=400, detail="You must agree to the Privacy Policy and Terms of Service.")
     
     normalized_username = user.username.lower()
-    normalized_email = user.email.lower()
+    normalized_email = user.email.lower() if user.email else None
     logger.info(f"Attempt to register user: {user.username}")
     
     try:
@@ -110,31 +110,49 @@ async def register_user(user: UserCreate):
 
     hashed_password = get_password_hash(user.password)
 
-    # Prepare the user item
+    # Prepare the user item with required fields
     user_item = {
         'username': normalized_username,
         'password': hashed_password,
         'firstName': user.firstName,
         'lastName': user.lastName,
         'isVeteran': user.isVeteran,
-        'interests': user.interests,
         'displayName': user.username,
         'agreedToDisclosures': user.agreedToDisclosures
     }
 
+    # Add optional fields only if they exist
     if user.email:
         user_item['email'] = normalized_email
         
     if user.phoneNumber:
         user_item['phoneNumber'] = user.phoneNumber
+    
+    if user.interests:
+        user_item['interests'] = user.interests
 
+    # Add veteran-specific fields only if they have values
     if user.isVeteran:
-        user_item['employmentStatus'] = user.employmentStatus
-        user_item['workLocation'] = user.workLocation
-        user_item['liveState'] = user.liveState
-        user_item['liveLocation'] = user.liveLocation
-        user_item['height'] = Decimal(user.height) if user.height is not None else None  # Height in inches
-        user_item['weight'] = Decimal(user.weight) if user.weight is not None else None  # Weight in pounds
+        # liveState is required for veterans (validated in model)
+        if user.liveState:
+            user_item['liveState'] = user.liveState
+        
+        # liveLocation is conditionally required based on state (validated in model)
+        if user.liveLocation:
+            user_item['liveLocation'] = user.liveLocation
+        
+        # Optional fields - only add if provided
+        if user.employmentStatus:
+            user_item['employmentStatus'] = user.employmentStatus
+        
+        if user.workLocation:
+            user_item['workLocation'] = user.workLocation
+        
+        if user.height is not None:
+            user_item['height'] = Decimal(str(user.height))
+        
+        if user.weight is not None:
+            user_item['weight'] = Decimal(str(user.weight))
         
     # Generate verification token with expiration
     verification_token = secrets.token_urlsafe(32)
@@ -149,12 +167,12 @@ async def register_user(user: UserCreate):
         # Save the user in DynamoDB
         users_table.put_item(Item=user_item)
 
+        # Verification email sent after registration, removed to reduce unnecessary emails
         # if user.email:
         #     email_sent = await send_verification_email(user.email, verification_token, user.username)
         #     if not email_sent:
         #         logger.warning(f"Failed to send verification email to {user.email}")
         #     # pass #disabled for now
-        # Removed auto email verification
 
         await create_default_tasks_for_user(normalized_username)
 

@@ -68,6 +68,7 @@ interface EditFormData {
   interests: string[];
   employmentStatus: string;
   workLocation: string;
+  liveState: string;
   liveLocation: string;
   isVeteran: boolean;
   height: string;
@@ -83,6 +84,7 @@ interface UpdateUserDataParams {
   interests?: string[];
   employmentStatus?: string;
   workLocation?: string;
+  liveState?: string;
   liveLocation?: string;
   isVeteran?: boolean;
   weight?: number;
@@ -106,6 +108,7 @@ const Dashboard: React.FC = () => {
     interests: [] as string[],
     employmentStatus: '',
     workLocation: '',
+    liveState: '',
     liveLocation: '',
     isVeteran: true,
     height: '',
@@ -184,6 +187,7 @@ const Dashboard: React.FC = () => {
       interests: user.interests || [], // Ensure this is an array
       employmentStatus: user.employmentStatus || '',
       workLocation: user.workLocation || '',
+      liveState: user.liveState || '',
       liveLocation: user.liveLocation || '',
       isVeteran: user.isVeteran !== undefined ? user.isVeteran : true,
       height: user.height !== undefined ? user.height.toString() : '',
@@ -535,6 +539,9 @@ const Dashboard: React.FC = () => {
                       <Box w={{ base: "100%", sm: "50%" }}>
                         {renderField("workLocation", "Work Location", editFormData.workLocation, <MapPin size={20} />)}
                       </Box>
+                        <Box w={{ base: "100%", sm: "50%" }}>
+                          {renderField("liveState", "State/Territory", editFormData.liveState, <MapPin size={20} />)}
+                        </Box>
                       <Box w={{ base: "100%", sm: "50%" }}>
                         {renderField("liveLocation", "Live Location", editFormData.liveLocation, <MapPin size={20} />)}
                       </Box>
@@ -658,6 +665,30 @@ const Dashboard: React.FC = () => {
                                     {user.firstName && user.lastName
                                       ? `${user.firstName} ${user.lastName}`
                                       : user.firstName || user.lastName || "—"}
+                                  </Text>
+                                </Box>
+                              </Flex>
+
+                              <Flex align="center">
+                                <Box p={2} borderRadius="md" bg={iconBgColor} color={iconColor} mr={3}>
+                                  <MapPin size={16} />
+                                </Box>
+                                <Box>
+                                  <Text fontSize="xs" color={subTextColor} fontWeight="medium">State</Text>
+                                  <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                                    {user.liveState || "—"}
+                                  </Text>
+                                </Box>
+                                                            </Flex>
+                                                            
+                                                            <Flex align="center">
+                                <Box p={2} borderRadius="md" bg={iconBgColor} color={iconColor} mr={3}>
+                                  <MapPin size={16} />
+                                </Box>
+                                <Box>
+                                  <Text fontSize="xs" color={subTextColor} fontWeight="medium">City</Text>
+                                  <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                                    {user.liveLocation || "—"}
                                   </Text>
                                 </Box>
                               </Flex>

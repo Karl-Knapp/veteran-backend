@@ -265,6 +265,7 @@ interface UpdateUserDataParams {
 	interests?: string[];
 	employmentStatus?: string;
 	workLocation?: string;
+	liveState?: string;
 	liveLocation?: string;
 	isVeteran?: boolean;
 	weight?: number;

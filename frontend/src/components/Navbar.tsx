@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { getUserProfilePic, getUserData } from '../Api/getData';
 import {
   LogOut, LogIn, Home, Users, MessageCircle, Grid, Activity, Search,
-  CreditCard, BookOpen, Settings, File,
+  CreditCard, BookOpen, Settings, Calendar,
   Award
 } from 'react-feather';
 import ColorModeToggle from './ColorModeToggle';
@@ -247,7 +247,7 @@ const Navbar: React.FC = () => {
         >
           Resources
         </Button>
-        <Button
+        {/* <Button
           leftIcon={<File size={18} />}
           variant="ghost"
           onClick={() => navigate(`/${username}/forms`)}
@@ -260,7 +260,7 @@ const Navbar: React.FC = () => {
           py={5}
         >
           Forms
-        </Button>
+        </Button> */}
         <Button
           leftIcon={<Award size={18} />}
           variant="ghost"
@@ -274,6 +274,20 @@ const Navbar: React.FC = () => {
           py={5}
         >
           Supporters
+        </Button>
+        <Button
+          leftIcon={<Calendar size={18} />}
+          variant="ghost"
+          onClick={() => navigate(`/events`)}
+          borderRadius="md"
+          _hover={{ bg: hoverBgColor, color: hoverTextColor }}
+          color={buttonColor}
+          justifyContent="flex-start"
+          width="100%"
+          size="md"
+          py={5}
+        >
+          Events
         </Button>
       </VStack>
 

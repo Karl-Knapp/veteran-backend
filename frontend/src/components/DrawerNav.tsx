@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { getUserProfilePic, getUserData } from '../Api/getData';
 import {
   LogOut, LogIn, Home, Users, MessageCircle, Grid, Activity, Search,
-  CreditCard, BookOpen, Settings, File, AlignCenter
+  CreditCard, BookOpen, Settings, AlignCenter, Award, Calendar
 } from 'react-feather';
 import ColorModeToggle from './ColorModeToggle';
 
@@ -96,7 +96,9 @@ const DrawerNav: React.FC = () => {
       )}
       <Button leftIcon={<CreditCard size={18} />} onClick={() => { navigate(`/donate`); onClose(); }} {...btnProps}>Donate</Button>
       <Button leftIcon={<BookOpen size={18} />} onClick={() => { navigate(`/resources`); onClose(); }} {...btnProps}>Resources</Button>
-      <Button leftIcon={<File size={18} />} onClick={() => { navigate(`/${username}/forms`); onClose(); }} {...btnProps}>Forms</Button>
+      <Button leftIcon={<Award size={18} />} onClick={() => { navigate(`/supporters`); onClose(); }} {...btnProps}>Supporters</Button>
+      <Button leftIcon={<Calendar size={18} />} onClick={() => { navigate(`/events`); onClose(); }} {...btnProps}>Events</Button>
+      {/* <Button leftIcon={<File size={18} />} onClick={() => { navigate(`/${username}/forms`); onClose(); }} {...btnProps}>Forms</Button> */}
     </VStack>
   );
 

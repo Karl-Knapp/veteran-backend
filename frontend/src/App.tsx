@@ -6,8 +6,9 @@ import Navbar from './components/Navbar';
 import { AuthProvider } from './Auth/Auth';
 import { ChakraProvider, Box, Flex } from '@chakra-ui/react';
 import ProtectedRoute from './components/ProtectedRoute';
-import Forms from './components/forms/Forms';
+// import Forms from './components/forms/Forms';
 import DrawerNav from './components/DrawerNav';
+import Events from './components/Events';
 
 // Lazy imports
 const Home = lazy(() => import('./components/Home'));
@@ -66,6 +67,7 @@ function App() {
                   <Route path="/verify-email" element={<EmailVerification />} />
                   <Route path="/resend-verification" element={<ResendVerification />} />
                   <Route path="/supporters" element={<Supporters />} />
+                  <Route path="/events" element={<Events />} />
                   <Route element={<ProtectedRoute allowedRoles={["veteran", "admin"]} requireEmailVerification={true} />}>
                     <Route path="/:username/feed" element={<Feed />} />
                     <Route path="/:username/chat" element={<Chat />} />
@@ -74,7 +76,7 @@ function App() {
                     <Route path="/:username/search" element={<UserSearch />} />
                     <Route path="/:username/users" element={<Profile />} />
                     <Route path="/:username/visit/:otherUsername" element={<OtherProfile />} />
-                    <Route path="/:username/forms" element={<Forms />} />
+                    {/* <Route path="/:username/forms" element={<Forms />} /> */}
                   </Route>
 
                   <Route element={<ProtectedRoute allowedRoles={["admin"]} requireEmailVerification={true} />}>

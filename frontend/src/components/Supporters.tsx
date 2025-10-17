@@ -174,6 +174,22 @@ const Donators: React.FC = () => {
               })}
             </SimpleGrid>
           </Box>
+                    <VStack spacing={4} textAlign="center" maxW="800px">
+            <Heading
+              size="x0.5"
+              color={textColor}
+              letterSpacing="tight"
+            >
+              Special Thanks to the University of Pennsylvania
+            </Heading>
+            <Text
+              fontSize={{ base: 'md', md: 'lg' }}
+              color={subTextColor}
+              lineHeight="1.8"
+            >
+              We extend our heartfelt gratitude to the University of Pennsylvania for their foundational role in creating our initial application. Their work laid the groundwork for the tools we continue to develop in support of Veterans’ health and well-being. We are deeply appreciative of their early partnership and lasting contribution.
+            </Text>
+          </VStack>
         </VStack>
       </Container>
     </Box>

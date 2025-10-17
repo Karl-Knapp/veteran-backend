@@ -10,8 +10,8 @@ import {
   Stack,
   Center,
   Text,
-  RadioGroup,
-  Radio,
+  // RadioGroup,
+  // Radio,
   Checkbox,
   Alert,
   AlertIcon,
@@ -35,13 +35,13 @@ interface FormData {
   phoneNumber: string;
   email: string;
   interests: string[];
-  employmentStatus: string;
-  workLocation: string;
+  // employmentStatus: string;
+  // workLocation: string;
   liveState: string;
-  liveLocation: string;
+  liveLocation: string; // Re-enabled for specific states
   isVeteran: boolean;
-  weight: number;
-  height: number;
+  // weight: number;
+  // height: number;
   agreedToDisclosures: boolean;
 }
 
@@ -59,13 +59,13 @@ const Register: React.FC = () => {
     phoneNumber: '',
     email: '',
     interests: [],
-    employmentStatus: '',
-    workLocation: '',
+    // employmentStatus: '',
+    // workLocation: '',
     liveState: '',
-    liveLocation: '',
+    liveLocation: '', // Re-enabled
     isVeteran: false,
-    weight: 0,
-    height: 0,
+    // weight: 0,
+    // height: 0,
     agreedToDisclosures: false,
   });
 
@@ -76,12 +76,16 @@ const Register: React.FC = () => {
   const boxBgColor = useColorModeValue("white", "gray.700");
   const textColor = useColorModeValue("gray.800", "white");
   const secondaryTextColor = useColorModeValue("gray.700", "gray.300");
-  const mutedTextColor = useColorModeValue("gray.600", "gray.400");
+  // const mutedTextColor = useColorModeValue("gray.600", "gray.400");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const inputBgColor = useColorModeValue("gray.50", "gray.600");
   const checkboxBgColor = useColorModeValue("gray.50", "gray.600");
   const buttonBgColor = useColorModeValue("gray.500", "gray.600");
   const buttonHoverBgColor = useColorModeValue("gray.600", "gray.700");
+
+  // States that require city input
+  const statesRequiringCity = ['Pennsylvania'];
+  const shouldShowCity = statesRequiringCity.includes(formData.liveState);
 
   const handleNext = () => {
     if (step === 1) {
@@ -113,21 +117,22 @@ const Register: React.FC = () => {
       }
 
       if (!formData.agreedToDisclosures) {
-      toast({
-        title: 'You must agree to the Privacy Policy and Terms of Service to continue.',
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
-      return;
-    }
+        toast({
+          title: 'You must agree to the Privacy Policy and Terms of Service to continue.',
+          status: 'error',
+          duration: 4000,
+          isClosable: true,
+        });
+        return;
+      }
 
     } else if (step === 2 && formData.isVeteran) {
-      // Existing validation for step 2 for veterans
-      const requiredFields = ['liveLocation', 'employmentStatus', 'weight', 'height'];
-  
-      if (formData.employmentStatus === 'Employed') {
-        requiredFields.push('workLocation');
+      // Updated validation for step 2 - liveState is required, liveLocation required if in specific states
+      const requiredFields = ['liveState'];
+      
+      // Add liveLocation to required fields if state requires it
+      if (shouldShowCity) {
+        requiredFields.push('liveLocation');
       }
   
       const isValid = requiredFields.every(
@@ -138,8 +143,11 @@ const Register: React.FC = () => {
       );
   
       if (!isValid) {
+        const message = shouldShowCity 
+          ? 'Please fill out your state/territory and city'
+          : 'Please select your state/territory';
         toast({
-          title: 'Please fill out all required fields',
+          title: message,
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -168,22 +176,22 @@ const Register: React.FC = () => {
     }));
   };
 
-  const handleRadioChange = (name: string, value: string) => {
-    if (name === 'interests') {
-      setFormData((prevData) => ({
-        ...prevData,
-        interests: prevData.interests.includes(value)
-          ? prevData.interests.filter(interest => interest !== value)
-          : [...prevData.interests, value]
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-        ...(name === 'employmentStatus' && value === 'Unemployed' ? { workLocation: 'N/A' } : {})
-      }));
-    }
-  };
+  // const handleRadioChange = (name: string, value: string) => {
+  //   if (name === 'interests') {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       interests: prevData.interests.includes(value)
+  //         ? prevData.interests.filter(interest => interest !== value)
+  //         : [...prevData.interests, value]
+  //     }));
+  //   } else {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       [name]: value,
+  //       // ...(name === 'employmentStatus' && value === 'Unemployed' ? { workLocation: 'N/A' } : {})
+  //     }));
+  //   }
+  // };
 
   const handleCheckboxChange = (interest: string) => {
     setFormData((prevData) => {
@@ -195,16 +203,16 @@ const Register: React.FC = () => {
     });
   };
 
-  const handleNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    const parsedValue = value ? parseFloat(value) : '';
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: parsedValue,
-    }));
-  };
+  // const handleNumberChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   const parsedValue = value ? parseFloat(value) : '';
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: parsedValue,
+  //   }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -407,7 +415,8 @@ const Register: React.FC = () => {
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
                   {formData.isVeteran && (
                     <>
-                      <FormControl id="employmentStatus" isRequired>
+                      {/* COMMENTED OUT: Employment Status */}
+                      {/* <FormControl id="employmentStatus" isRequired>
                         <FormLabel fontSize="lg" mb={2} color={textColor}>Employment Status</FormLabel>
                         <RadioGroup
                           name="employmentStatus"
@@ -419,9 +428,48 @@ const Register: React.FC = () => {
                             <Radio value="Unemployed">Unemployed</Radio>
                           </Stack>
                         </RadioGroup>
+                      </FormControl> */}
+
+                      <FormControl id="liveState" isRequired>
+                        <FormLabel fontSize="lg" mb={2} color={textColor}>State/Territory</FormLabel>
+                        <Select
+                          placeholder="Select your state or territory"
+                          name="liveState"
+                          value={formData.liveState}
+                          onChange={handleInputChange}
+                          size="lg"
+                          bg={inputBgColor}
+                          color={textColor}
+                          borderColor={borderColor}
+                        >
+                          {stateOptions.map((state) => (
+                            <option key={state} value={state} style={{ backgroundColor: inputBgColor }}>
+                              {state}
+                            </option>
+                          ))}
+                        </Select>
                       </FormControl>
 
-                      <FormControl id="interests" color={textColor}>
+                      {/* Conditionally show City field for specific states */}
+                      {shouldShowCity && (
+                        <FormControl id="liveLocation" isRequired>
+                          <FormLabel fontSize="lg" mb={2} color={textColor}>City</FormLabel>
+                          <Input
+                            type="text"
+                            placeholder="Enter your city"
+                            name="liveLocation"
+                            value={formData.liveLocation}
+                            onChange={handleInputChange}
+                            size="lg"
+                            p={2}
+                            bg={inputBgColor}
+                            color={textColor}
+                            borderColor={borderColor}
+                          />
+                        </FormControl>
+                      )}
+
+                      <FormControl id="interests" color={textColor} gridColumn={shouldShowCity ? "span 1" : "span 2"}>
                         <FormLabel fontSize="lg" mb={2}>Interests</FormLabel>
                         <Stack 
                           direction={{ base: "column", md: "row" }}
@@ -462,43 +510,8 @@ const Register: React.FC = () => {
                         </Stack>
                       </FormControl>
 
-                      <FormControl id="liveState" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>State/Territory</FormLabel>
-                        <Select
-                          placeholder="Select your state or territory"
-                          name="liveState"
-                          value={formData.liveState}
-                          onChange={handleInputChange}
-                          size="lg"
-                          bg={inputBgColor}
-                          color={textColor}
-                          borderColor={borderColor}
-                        >
-                          {stateOptions.map((state) => (
-                            <option key={state} value={state} style={{ backgroundColor: inputBgColor }}>
-                              {state}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormControl>
-
-                      <FormControl id="liveLocation" isRequired>
-                        <FormLabel fontSize="lg" mb={2} color={textColor}>City</FormLabel>
-                        <Input
-                          type="text"
-                          placeholder="Enter your city"
-                          name="liveLocation"
-                          value={formData.liveLocation}
-                          onChange={handleInputChange}
-                          size="lg"
-                          p={2}
-                          bg={inputBgColor}
-                          color={textColor}
-                          borderColor={borderColor}
-                        />
-                      </FormControl>
-
-                      <FormControl id="workLocation" isRequired={formData.employmentStatus === 'Employed'}>
+                      {/* COMMENTED OUT: Work Location */}
+                      {/* <FormControl id="workLocation" isRequired={formData.employmentStatus === 'Employed'}>
                         <FormLabel fontSize="lg" mb={2} color={textColor}>Where do you work?</FormLabel>
                         <Input
                           type="text"
@@ -512,9 +525,10 @@ const Register: React.FC = () => {
                           color={textColor}
                           borderColor={borderColor}
                         />
-                      </FormControl>
+                      </FormControl> */}
 
-                      <FormControl id="weight" isRequired>
+                      {/* COMMENTED OUT: Weight */}
+                      {/* <FormControl id="weight" isRequired>
                         <FormLabel fontSize="lg" mb={2} color={textColor}>Weight (lbs)</FormLabel>
                         <Input
                           type="number"
@@ -529,9 +543,10 @@ const Register: React.FC = () => {
                           color={textColor}
                           borderColor={borderColor}
                         />
-                      </FormControl>
+                      </FormControl> */}
 
-                      <FormControl id="height" isRequired>
+                      {/* COMMENTED OUT: Height */}
+                      {/* <FormControl id="height" isRequired>
                         <FormLabel fontSize="lg" mb={2} color={textColor}>Height (inches)</FormLabel>
                         <Input
                           type="number"
@@ -546,10 +561,10 @@ const Register: React.FC = () => {
                           color={textColor}
                           borderColor={borderColor}
                         />
-                      </FormControl>
+                      </FormControl> */}
                       
-                      {/* Privacy notice */}
-                      <Text
+                      {/* COMMENTED OUT: Privacy notice for height/weight */}
+                      {/* <Text
                         fontSize="sm"
                         color={mutedTextColor}
                         fontStyle="italic"
@@ -558,7 +573,7 @@ const Register: React.FC = () => {
                         gridColumn="span 2"
                       >
                         Your height and weight will only be shared with verified employers of organizations and health professionals. We do not disclose this information to other users or third parties.
-                      </Text>
+                      </Text> */}
                     </>
                   )}
                   

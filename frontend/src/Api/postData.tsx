@@ -25,21 +25,17 @@ export const postUser = async ({
 }: PostUserParams) => {
 	setErrors(null);
 
-	// Additional frontend validation
-	if (formData.isVeteran) {
-		const requiredVeteranFields = [
-			"employmentStatus",
-			"liveLocation",
-			"weight",
-			"height",
-		];
+	// States that require city
+	const STATES_REQUIRING_CITY = ['Pennsylvania'];
 
-		// Only check workLocation if employed
-		if (formData.employmentStatus === "Employed" && !formData.workLocation) {
-			setErrors("Work location is required for employed veterans.");
+	// Additional frontend validation for veterans
+	if (formData.isVeteran) {
+		// liveState is required for all veterans
+		if (!formData.liveState) {
+			setErrors("State/Territory is required for veterans.");
 			toast({
 				title: "Validation Error",
-				description: "Work location is required for employed veterans.",
+				description: "State/Territory is required for veterans.",
 				status: "error",
 				duration: 5000,
 				isClosable: true,
@@ -47,51 +43,73 @@ export const postUser = async ({
 			return;
 		}
 
-		// Check other required fields
-		for (const field of requiredVeteranFields) {
-			if (!formData[field] && formData[field] !== 0) {
-				setErrors(
-					`Please fill out all required fields for veterans (${field} is missing).`
-				);
-				toast({
-					title: "Validation Error",
-					description: `Please fill out all required fields for veterans (${field} is missing).`,
-					status: "error",
-					duration: 5000,
-					isClosable: true,
-				});
-				return;
-			}
+		// liveLocation is required only for specific states
+		if (STATES_REQUIRING_CITY.includes(formData.liveState) && !formData.liveLocation) {
+			setErrors(`City is required for veterans in ${formData.liveState}.`);
+			toast({
+				title: "Validation Error",
+				description: `City is required for veterans in ${formData.liveState}.`,
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
 		}
 	}
 
-	try {
-		// Prepare payload differently based on veteran status
-		const payload = {
-			...formData,
-			interests: formData.interests || [], // Always include interests array
-			isVeteran: formData.isVeteran || false,
-			email: formData.email !== "" ? formData.email : null,
-		};
+try {
+	// Prepare payload with flexible typing to allow dynamic properties
+	const payload: any = {
+		username: formData.username,
+		firstName: formData.firstName,
+		lastName: formData.lastName,
+		password: formData.password,
+		isVeteran: formData.isVeteran || false,
+		agreedToDisclosures: formData.agreedToDisclosures,
+		interests: formData.interests || [], // Always include interests array
+		email: formData.email !== "" ? formData.email : null,
+		phoneNumber: formData.phoneNumber || null,
+	};
 
-		// Only include veteran-specific fields if user is a veteran
-		if (formData.isVeteran) {
-			payload.workLocation = formData.workLocation || "";
-			payload.employmentStatus = formData.employmentStatus || "";
-			payload.liveLocation = formData.liveLocation || "";
-			payload.weight = formData.weight || 0;
-			payload.height = formData.height || 0;
+	// Only include veteran-specific fields if user is a veteran and they have values
+	if (formData.isVeteran) {
+		// Required field
+		if (formData.liveState) {
+			payload.liveState = formData.liveState;
 		}
+		
+		// Conditionally required field
+		if (formData.liveLocation) {
+			payload.liveLocation = formData.liveLocation;
+		}
+		
+		// Optional fields - only include if provided
+		if (formData.employmentStatus) {
+			payload.employmentStatus = formData.employmentStatus;
+		}
+		
+		if (formData.workLocation) {
+			payload.workLocation = formData.workLocation;
+		}
+		
+		if (formData.weight) {
+			payload.weight = formData.weight;
+		}
+		
+		if (formData.height) {
+			payload.height = formData.height;
+		}
+	}
 
-		const response = await api.post(
-			`${API_URL}/users/register`,
-			payload,
-			{
-				headers: {
+	const response = await api.post(
+		`${API_URL}/users/register`,
+		payload,
+		{
+			headers: {
 				'Content-Type': 'application/json'
-				}
 			}
-		);
+		}
+	);
 
 		// Show success toast based on response data
 		toast({

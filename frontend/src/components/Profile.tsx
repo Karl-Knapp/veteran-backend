@@ -4,7 +4,12 @@ import {
   Flex, Spacer, Button, Input, Avatar, Center, useToast,
   Heading, Badge, Container, useColorModeValue
 } from '@chakra-ui/react';
-import { Edit, Briefcase, Heart, Activity } from 'react-feather'; //Add MapPin later if we add back MapPin functionality.
+import {
+  Edit,
+  // Briefcase,
+  Heart,
+  // Activity
+} from 'react-feather'; //Add MapPin later if we add back MapPin functionality.
 import { useAuth } from '../Auth/Auth';
 import { getUserData } from '../Api/getData';
 import { putUserData } from '../Api/putData';
@@ -265,15 +270,15 @@ const Profile: React.FC = () => {
                 Veteran Profile Information
               </Heading>
               <VStack divider={<Divider borderColor={dividerColor} />} spacing={4} align="stretch">
-                {renderField("employmentStatus", "Employment Status", userData.employmentStatus, <Briefcase size={20} />)}
-                <HStack spacing={4} flexDir={{ base: "column", sm: "row" }} w="100%">
+                {/* {renderField("employmentStatus", "Employment Status", userData.employmentStatus, <Briefcase size={20} />)} */}
+                {/* <HStack spacing={4} flexDir={{ base: "column", sm: "row" }} w="100%">
                   <Box w={{ base: "100%", sm: "50%" }}>
                     {renderField("height", "Height (cm)", userData.height, <Activity size={20} />)}
                   </Box>
                   <Box w={{ base: "100%", sm: "50%" }}>
                     {renderField("weight", "Weight (kg)", userData.weight, <Activity size={20} />)}
                   </Box>
-                </HStack>
+                </HStack> */}
                 {/* {renderField("liveLocation", "Live Location", userData.liveLocation, <MapPin size={20} />)}
                 {renderField("workLocation", "Work Location", userData.workLocation, <MapPin size={20} />)} */}
                 {renderField("interests", "Interests", userData.interests, <Heart size={20} />)}
