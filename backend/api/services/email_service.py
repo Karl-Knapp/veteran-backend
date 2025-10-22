@@ -80,9 +80,12 @@ async def send_verification_email(email: str, verification_token: str, username:
 
 
 async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str = "BTH Ebook.pdf"):
-    """Send welcome email with PDF attachment after successful verification"""
+    """Send welcome email with PDF download link"""
     
-    subject = "Welcome to BTH Fitness - Important Information"
+    # Your existing S3 URL - PDF already uploaded
+    pdf_url = "https://bth-fitness-bucket.s3.us-east-2.amazonaws.com/resources/BTH%20Ebook.pdf"
+    
+    subject = "Welcome to BTH Fitness - Your Free eBook"
     
     html_body = f"""
     <!DOCTYPE html>
@@ -94,7 +97,8 @@ async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str =
             .header {{ text-align: center; color: #333; margin-bottom: 30px; }}
             .content {{ line-height: 1.6; color: #555; }}
             .footer {{ font-size: 12px; color: #666; margin-top: 30px; text-align: center; }}
-            .highlight {{ background-color: #f0f8ff; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0; }}
+            .highlight {{ background-color: #f0f8ff; padding: 20px; border-left: 4px solid #007bff; margin: 20px 0; text-align: center; }}
+            .button {{ display: inline-block; padding: 14px 28px; background-color: #007bff; color: white; text-decoration: none; border-radius: 6px; margin: 15px 0; font-weight: bold; font-size: 16px; }}
         </style>
     </head>
     <body>
@@ -103,7 +107,10 @@ async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str =
             <div class="content">
                 <p>Your email has been successfully verified. Thank you for joining our veterans community!</p>
                 <div class="highlight">
-                    <p><strong>📎 Attachment:</strong> We've included an important document with this email. Please review it at your convenience.</p>
+                    <h3 style="margin-top: 0; color: #007bff;">📚 Your Free eBook is Ready!</h3>
+                    <p>We've prepared an important resource document for you.</p>
+                    <a href="{pdf_url}" class="button">Download Your eBook</a>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">Click the button above to download your copy</p>
                 </div>
                 <p>We're excited to have you as part of our community. Here's what you can do next:</p>
                 <ul>
@@ -116,6 +123,7 @@ async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str =
             </div>
             <div class="footer">
                 <p>Thank you for being part of BTH Fitness!</p>
+                <p style="color: #999; font-size: 11px;">BTH Fitness - Veterans Community</p>
             </div>
         </div>
     </body>
@@ -127,7 +135,9 @@ async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str =
     
     Your email has been successfully verified. Thank you for joining our veterans community!
     
-    We've attached an important document to this email. Please review it at your convenience.
+    📚 Your Free eBook is Ready!
+    
+    Download your copy here: {pdf_url}
     
     What you can do next:
     - Complete your profile
@@ -141,49 +151,21 @@ async def send_welcome_email_with_pdf(email: str, username: str, pdf_path: str =
     """
     
     try:
-        # Read the PDF file
-        with open(pdf_path, 'rb') as file:
-            pdf_data = file.read()
-        
-        # Create the raw email message with attachment
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
-        from email.mime.application import MIMEApplication
-        
-        msg = MIMEMultipart('mixed')
-        msg['Subject'] = subject
-        msg['From'] = 'noreply@bthfitness.org'
-        msg['To'] = email
-        
-        # Create multipart/alternative for text and HTML
-        msg_body = MIMEMultipart('alternative')
-        
-        # Add text and HTML parts
-        text_part = MIMEText(text_body, 'plain', 'UTF-8')
-        html_part = MIMEText(html_body, 'html', 'UTF-8')
-        
-        msg_body.attach(text_part)
-        msg_body.attach(html_part)
-        msg.attach(msg_body)
-        
-        # Add PDF attachment
-        pdf_attachment = MIMEApplication(pdf_data)
-        pdf_attachment.add_header('Content-Disposition', 'attachment', filename='BTH Ebook.pdf')
-        msg.attach(pdf_attachment)
-        
-        # Send raw email via SES
-        response = ses_client.send_raw_email(
+        response = ses_client.send_email(
             Source='noreply@bthfitness.org',
-            Destinations=[email],
-            RawMessage={'Data': msg.as_string()}
+            Destination={'ToAddresses': [email]},
+            Message={
+                'Subject': {'Data': subject, 'Charset': 'UTF-8'},
+                'Body': {
+                    'Text': {'Data': text_body, 'Charset': 'UTF-8'},
+                    'Html': {'Data': html_body, 'Charset': 'UTF-8'}
+                }
+            }
         )
         
-        logger.info(f"Welcome email with PDF sent to {email}, MessageId: {response['MessageId']}")
+        logger.info(f"Welcome email with PDF link sent to {email}, MessageId: {response['MessageId']}")
         return True
         
-    except FileNotFoundError:
-        logger.error(f"PDF file not found at path: {pdf_path}")
-        return False
     except ClientError as e:
         logger.error(f"Failed to send welcome email to {email}: {e}")
         return False

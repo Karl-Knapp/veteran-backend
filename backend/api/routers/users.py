@@ -20,6 +20,8 @@ from api.services.email_service import send_verification_email, send_welcome_ema
 import hashlib
 from boto3.dynamodb.conditions import Attr
 import time
+import boto3
+import os
 
 router = APIRouter(
     prefix="/users",
@@ -28,6 +30,8 @@ router = APIRouter(
 
 # Initialize password context for hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+s3_client = boto3.client('s3', region_name=os.getenv('AWS_REGION', 'us-east-2'))
 
 # Reference to the users table
 users_table = dynamodb.Table('users')
@@ -214,16 +218,16 @@ async def verify_email(token: str):
         )
         
         logger.info(f"Email verified for user: {user['username']}")
-
-        # Send welcome email with PDF attachment
+        
+        # Send welcome email with PDF download link
         if user.get('email'):
             try:
-                await send_welcome_email_with_pdf(user['email'], user['username'], pdf_path="BTH Ebook.pdf")
-                logger.info(f"Welcome email with PDF sent to {user['email']}")
+                await send_welcome_email_with_pdf(user['email'], user['username'])
+                logger.info(f"Welcome email with PDF link sent to {user['email']}")
             except Exception as e:
                 logger.error(f"Failed to send welcome email: {e}")
                 # Don't fail the verification if email sending fails
-
+        
         return {"message": "Email verified successfully", "username": user['username']}
         
     except HTTPException:
