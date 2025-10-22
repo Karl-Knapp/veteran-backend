@@ -41,21 +41,22 @@ const ForgotPassword: React.FC = () => {
 	const linkColor = useColorModeValue("gray.500", "gray.400");
 	const linkHoverColor = useColorModeValue("gray.700", "gray.200");
 
-const handleSubmit = async (e: React.FormEvent) => {
-	e.preventDefault();
-	setIsLoading(true);
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsLoading(true);
 
-	try {
-		await api.post(`${API_URL}/users/forgot-password`, { email });
-		setSuccess(true);
-	} catch (error) {
-		console.error("Error:", error);
-		// Still show success message (don't reveal if email exists)
-		setSuccess(true);
-	} finally {
-		setIsLoading(false);
-	}
-};
+		try {
+			// FIXED: Send email as a query parameter instead of JSON body
+			await api.post(`${API_URL}/users/forgot-password?email=${encodeURIComponent(email.trim())}`);
+			setSuccess(true);
+		} catch (error) {
+			console.error("Error:", error);
+			// Still show success message (don't reveal if email exists)
+			setSuccess(true);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<Center h="100vh" bg={pageBgColor}>
@@ -99,7 +100,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 						<Box>
 							<Text fontWeight="bold">Check your email</Text>
 							<Text fontSize="sm">
-								We've sent password reset instructions to {email}
+								If an account exists with {email}, you will receive password reset instructions.
 							</Text>
 						</Box>
 					</Alert>
