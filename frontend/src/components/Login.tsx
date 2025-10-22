@@ -153,6 +153,19 @@ const Login: React.FC = () => {
 							/>
 						</FormControl>
 
+						<Box textAlign="right">
+							<Button
+								variant="link"
+								color={linkColor}
+								fontSize="sm"
+								fontWeight="medium"
+								_hover={{ color: linkHoverColor }}
+								onClick={() => navigate("/forgot-password")}
+							>
+								Forgot password?
+							</Button>
+						</Box>
+
 						<Button
 							mt={4}
 							bgColor={buttonBgColor}

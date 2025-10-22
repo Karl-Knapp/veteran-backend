@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 // import Forms from './components/forms/Forms';
 import DrawerNav from './components/DrawerNav';
 import Events from './components/Events';
+import ForgotPassword from './components/ForgotPassword';
 
 // Lazy imports
 const Home = lazy(() => import('./components/Home'));
@@ -29,6 +30,7 @@ const Dashboard = lazy(() => import('./components/admin/Dashboard'));
 const EmailVerification = lazy(() => import('./components/EmailVerification'));
 const ResendVerification = lazy(() => import('./components/ResendVerification'));
 const Supporters = lazy(() => import('./components/Supporters'));
+const ResetPassword = lazy(() => import('./components/ResetPassword'));
 
 
 function App() {
@@ -68,6 +70,8 @@ function App() {
                   <Route path="/resend-verification" element={<ResendVerification />} />
                   <Route path="/supporters" element={<Supporters />} />
                   <Route path="/events" element={<Events />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route element={<ProtectedRoute allowedRoles={["veteran", "admin"]} requireEmailVerification={true} />}>
                     <Route path="/:username/feed" element={<Feed />} />
                     <Route path="/:username/chat" element={<Chat />} />

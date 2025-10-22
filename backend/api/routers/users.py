@@ -16,7 +16,8 @@ from decimal import Decimal
 from api.routers.fitness import create_default_tasks_for_user
 import secrets
 from datetime import datetime, timedelta
-from api.services.email_service import send_verification_email
+from api.services.email_service import send_verification_email, send_welcome_email_with_pdf, send_password_reset_email
+import hashlib
 from boto3.dynamodb.conditions import Attr
 import time
 
@@ -213,6 +214,16 @@ async def verify_email(token: str):
         )
         
         logger.info(f"Email verified for user: {user['username']}")
+
+        # Send welcome email with PDF attachment
+        if user.get('email'):
+            try:
+                await send_welcome_email_with_pdf(user['email'], user['username'], pdf_path="BTH Ebook.pdf")
+                logger.info(f"Welcome email with PDF sent to {user['email']}")
+            except Exception as e:
+                logger.error(f"Failed to send welcome email: {e}")
+                # Don't fail the verification if email sending fails
+
         return {"message": "Email verified successfully", "username": user['username']}
         
     except HTTPException:
@@ -378,6 +389,148 @@ async def get_all_users(user: dict = Depends(login_manager)):
     except ClientError as e:
         logger.error(f"Failed to retrieve users from DynamoDB: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve users.")
+
+@router.post("/forgot-password")
+async def forgot_password(email: str):
+    """Request password reset - send email with reset token"""
+    try:
+        normalized_email = email.lower().strip()
+        
+        # Find user by email using the email index
+        response = users_table.query(
+            IndexName='email-index',
+            KeyConditionExpression=Key('email').eq(normalized_email)
+        )
+        
+        if not response.get('Items'):
+            # Don't reveal if email exists or not (security best practice)
+            logger.warning(f"Password reset requested for non-existent email: {normalized_email}")
+            return {
+                "message": "If an account exists with this email, you will receive password reset instructions."
+            }
+        
+        user = response['Items'][0]
+        username = user['username']
+        
+        # Generate secure reset token
+        reset_token = secrets.token_urlsafe(32)
+        token_expiry = datetime.utcnow() + timedelta(hours=1)  # 1 hour expiry
+        
+        # Store reset token in database
+        users_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET password_reset_token = :token, password_reset_expiry = :expiry',
+            ExpressionAttributeValues={
+                ':token': reset_token,
+                ':expiry': token_expiry.isoformat()
+            }
+        )
+        
+        # Send reset email
+        email_sent = await send_password_reset_email(normalized_email, reset_token, username)
+        
+        if not email_sent:
+            logger.error(f"Failed to send password reset email to {normalized_email}")
+        
+        logger.info(f"Password reset token generated for user: {username}")
+        
+        # Always return same message (don't reveal if email exists)
+        return {
+            "message": "If an account exists with this email, you will receive password reset instructions."
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in forgot_password: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process password reset request")
+
+
+@router.post("/reset-password")
+async def reset_password(token: str, new_password: str):
+    """Reset password using valid token"""
+    try:
+        # Validate new password strength
+        if len(new_password) < 8:
+            raise HTTPException(
+                status_code=400, 
+                detail="Password must be at least 8 characters long"
+            )
+        
+        # Find user with this reset token
+        response = users_table.scan(
+            FilterExpression=Attr('password_reset_token').eq(token)
+        )
+        
+        if not response['Items']:
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalid or expired reset token"
+            )
+        
+        user = response['Items'][0]
+        
+        # Check if token is expired
+        if 'password_reset_expiry' in user:
+            expiry = datetime.fromisoformat(user['password_reset_expiry'])
+            if datetime.utcnow() > expiry:
+                raise HTTPException(
+                    status_code=400, 
+                    detail="Reset token has expired. Please request a new one."
+                )
+        
+        # Hash the new password
+        hashed_password = get_password_hash(new_password)
+        
+        # Update password and remove reset token
+        users_table.update_item(
+            Key={'username': user['username']},
+            UpdateExpression='SET password = :password REMOVE password_reset_token, password_reset_expiry',
+            ExpressionAttributeValues={
+                ':password': hashed_password
+            }
+        )
+        
+        logger.info(f"Password successfully reset for user: {user['username']}")
+        
+        return {
+            "message": "Password has been reset successfully. You can now log in with your new password.",
+            "username": user['username']
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error resetting password: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reset password")
+
+
+@router.get("/verify-reset-token")
+async def verify_reset_token(token: str):
+    """Verify if a password reset token is valid (for frontend validation)"""
+    try:
+        response = users_table.scan(
+            FilterExpression=Attr('password_reset_token').eq(token)
+        )
+        
+        if not response['Items']:
+            return {"valid": False, "message": "Invalid token"}
+        
+        user = response['Items'][0]
+        
+        # Check if token is expired
+        if 'password_reset_expiry' in user:
+            expiry = datetime.fromisoformat(user['password_reset_expiry'])
+            if datetime.utcnow() > expiry:
+                return {"valid": False, "message": "Token expired"}
+        
+        return {
+            "valid": True, 
+            "username": user['username']
+        }
+        
+    except Exception as e:
+        logger.error(f"Error verifying reset token: {e}")
+        return {"valid": False, "message": "Error verifying token"}
+    
 
 # 2. ADMIN ROUTES WITH PARAMETERS
 @router.put("/admin/{username}/update", response_model=UserResponse)
@@ -792,5 +945,4 @@ async def delete_user(username: str, user: dict = Depends(login_manager)):
     except ClientError as e:
         logger.error(f"Failed to delete user from DynamoDB: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete user.")
-
 
