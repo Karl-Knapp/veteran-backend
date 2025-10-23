@@ -4,7 +4,7 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, Depends, Uplo
 from api.aws_wrappers.images import delete_image, upload_image
 from api.db_setup import dynamodb
 from api.config import login_manager
-from api.models.user import UserCreate, UserResponse, LoginRequest, UserUpdateRequest, ProfilePicResponse
+from api.models.user import UserCreate, UserResponse, LoginRequest, UserUpdateRequest, ProfilePicResponse, ForgotPasswordRequest, ResetPasswordRequest
 from fastapi.responses import RedirectResponse
 from passlib.context import CryptContext
 from boto3.dynamodb.conditions import Attr
@@ -396,7 +396,7 @@ async def get_all_users(user: dict = Depends(login_manager)):
         raise HTTPException(status_code=500, detail="Failed to retrieve users.")
 
 @router.post("/forgot-password")
-async def forgot_password(email: str):
+async def forgot_password(request: ForgotPasswordRequest):
     """Request password reset - send email with reset token"""
     try:
         normalized_email = email.lower().strip()
