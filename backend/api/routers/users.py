@@ -399,7 +399,7 @@ async def get_all_users(user: dict = Depends(login_manager)):
 async def forgot_password(request: ForgotPasswordRequest):
     """Request password reset - send email with reset token"""
     try:
-        normalized_email = email.lower().strip()
+        normalized_email = request.email.lower().strip()
         
         # Find user by email using the email index
         response = users_table.query(
