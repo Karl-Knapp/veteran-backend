@@ -46,8 +46,10 @@ const ForgotPassword: React.FC = () => {
 		setIsLoading(true);
 
 		try {
-			// FIXED: Send email as a query parameter instead of JSON body
-			await api.post(`${API_URL}/users/forgot-password?email=${encodeURIComponent(email.trim())}`);
+			// SECURE: Send as JSON body with Pydantic model
+			await api.post(`${API_URL}/users/forgot-password`, {
+				email: email.trim()
+			});
 			setSuccess(true);
 		} catch (error) {
 			console.error("Error:", error);

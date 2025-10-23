@@ -120,7 +120,6 @@ const ResetPassword: React.FC = () => {
 		verifyToken();
 	}, [token, navigate, toast]);
 
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -149,9 +148,9 @@ const ResetPassword: React.FC = () => {
 		setIsLoading(true);
 
 		try {
-			// SECURE: Send as JSON body
+			// SECURE: Send as JSON body with Pydantic model
 			await api.post(`${API_URL}/users/reset-password`, {
-				token,
+				token: token,
 				new_password: newPassword,
 			});
 

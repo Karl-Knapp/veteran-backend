@@ -1,6 +1,6 @@
 # backend/api/routes/users.py
 from typing import List, Optional
-from fastapi import APIRouter, File, Form, HTTPException, Request, Depends, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, Depends, UploadFile, status
 from api.aws_wrappers.images import delete_image, upload_image
 from api.db_setup import dynamodb
 from api.config import login_manager
@@ -22,6 +22,7 @@ from boto3.dynamodb.conditions import Attr
 import time
 import boto3
 import os
+from pydantic import BaseModel, Field, validator
 
 router = APIRouter(
     prefix="/users",
@@ -942,4 +943,3 @@ async def delete_user(username: str, user: dict = Depends(login_manager)):
     except ClientError as e:
         logger.error(f"Failed to delete user from DynamoDB: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete user.")
-
