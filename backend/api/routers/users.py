@@ -448,20 +448,13 @@ async def forgot_password(email: str):
         raise HTTPException(status_code=500, detail="Failed to process password reset request")
 
 
-@router.post("/reset-password")
-async def reset_password(token: str, new_password: str):
-    """Reset password using valid token"""
+@router.post("/reset-password", status_code=status.HTTP_200_OK)
+async def reset_password(request: ResetPasswordRequest):
+    """Reset password using valid token - SECURE VERSION using request body"""
     try:
-        # Validate new password strength
-        if len(new_password) < 8:
-            raise HTTPException(
-                status_code=400, 
-                detail="Password must be at least 8 characters long"
-            )
-        
         # Find user with this reset token
         response = users_table.scan(
-            FilterExpression=Attr('password_reset_token').eq(token)
+            FilterExpression=Attr('password_reset_token').eq(request.token)
         )
         
         if not response['Items']:
@@ -482,7 +475,7 @@ async def reset_password(token: str, new_password: str):
                 )
         
         # Hash the new password
-        hashed_password = get_password_hash(new_password)
+        hashed_password = get_password_hash(request.new_password)
         
         # Update password and remove reset token
         users_table.update_item(

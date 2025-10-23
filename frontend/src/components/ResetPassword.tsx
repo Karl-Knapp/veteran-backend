@@ -87,7 +87,7 @@ const ResetPassword: React.FC = () => {
 
 			try {
 				const response = await api.get(
-					`${API_URL}/users/verify-reset-token?token=${token}`
+					`${API_URL}/users/verify-reset-token?token=${encodeURIComponent(token)}`
 				);
 
 				if (response.data.valid) {
@@ -120,6 +120,7 @@ const ResetPassword: React.FC = () => {
 		verifyToken();
 	}, [token, navigate, toast]);
 
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -148,6 +149,7 @@ const ResetPassword: React.FC = () => {
 		setIsLoading(true);
 
 		try {
+			// SECURE: Send as JSON body
 			await api.post(`${API_URL}/users/reset-password`, {
 				token,
 				new_password: newPassword,
